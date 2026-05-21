@@ -8,7 +8,6 @@ SECRET_KEY = 'django-insecure-cambiar-en-produccion-usar-env-variable'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
