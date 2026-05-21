@@ -8,6 +8,7 @@ SECRET_KEY = 'django-insecure-cambiar-en-produccion-usar-env-variable'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://parcialdjango-production.up.railway.app']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
