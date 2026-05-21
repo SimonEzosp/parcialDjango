@@ -1,0 +1,116 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Mis Tareas{% endblock %}
+
+{% block content %}
+<!-- Estadísticas -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card stat-total p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Total</div>
+                    <div class="fs-2 fw-bold">{{ total }}</div>
+                </div>
+                <i class="bi bi-list-task fs-1 text-primary opacity-25"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card stat-pending p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Pendientes</div>
+                    <div class="fs-2 fw-bold">{{ pending }}</div>
+                </div>
+                <i class="bi bi-hourglass-split fs-1 text-warning opacity-25"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card stat-done p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small">Completadas</div>
+                    <div class="fs-2 fw-bold">{{ completed }}</div>
+                </div>
+                <i class="bi bi-check-circle fs-1 text-success opacity-25"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-4">
+    <div class="card-body py-2">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="text-muted small me-2"><i class="bi bi-funnel"></i> Filtrar:</span>
+            <a href="?" class="btn btn-sm {% if not request.GET.status %}btn-dark{% else %}btn-outline-secondary{% endif %}">Todas</a>
+            <a href="?status=pending" class="btn btn-sm {% if request.GET.status == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %}">Pendientes</a>
+            <a href="?status=completed" class="btn btn-sm {% if request.GET.status == 'completed' %}btn-success{% else %}btn-outline-success{% endif %}">Completadas</a>
+            <span class="text-muted small ms-3">Prioridad:</span>
+            <a href="?priority=high" class="btn btn-sm {% if request.GET.priority == 'high' %}btn-danger{% else %}btn-outline-danger{% endif %}">Alta</a>
+            <a href="?priority=medium" class="btn btn-sm {% if request.GET.priority == 'medium' %}btn-warning{% else %}btn-outline-warning{% endif %}">Media</a>
+            <a href="?priority=low" class="btn btn-sm {% if request.GET.priority == 'low' %}btn-success{% else %}btn-outline-success{% endif %}">Baja</a>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de tareas -->
+{% if tasks %}
+<div class="row g-3">
+    {% for task in tasks %}
+    <div class="col-12">
+        <div class="card {% if task.completed %}border-success{% endif %}">
+            <div class="card-body d-flex align-items-center gap-3">
+                <!-- Toggle completado -->
+                <a href="{% url 'task_toggle' task.pk %}" class="text-decoration-none" title="Marcar/desmarcar">
+                    {% if task.completed %}
+                        <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                    {% else %}
+                        <i class="bi bi-circle text-muted fs-4"></i>
+                    {% endif %}
+                </a>
+
+                <!-- Info principal -->
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <a href="{% url 'task_detail' task.pk %}" class="fw-semibold text-decoration-none text-dark {% if task.completed %}task-completed{% endif %}">
+                            {{ task.title }}
+                        </a>
+                        <span class="badge badge-{{ task.priority }}">
+                            {{ task.get_priority_display }}
+                        </span>
+                        {% if task.completed %}
+                            <span class="badge bg-success">✓ Completada</span>
+                        {% endif %}
+                    </div>
+                    {% if task.description %}
+                    <div class="text-muted small mt-1">{{ task.description|truncatechars:100 }}</div>
+                    {% endif %}
+                    <div class="text-muted" style="font-size:0.75rem;">
+                        <i class="bi bi-clock me-1"></i>{{ task.created_at|date:"d M Y, H:i" }}
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="d-flex gap-2">
+                    <a href="{% url 'task_update' task.pk %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-inbox fs-1 text-muted"></i>
+    <p class="text-muted mt-3">No hay tareas. <a href="{% url 'task_create' %}">¡Crea la primera!</a></p>
+</div>
+{% endif %}
+{% endblock %}

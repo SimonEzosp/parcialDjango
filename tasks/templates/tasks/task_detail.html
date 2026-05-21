@@ -1,0 +1,51 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0"><i class="bi bi-file-text me-2 text-primary"></i>Detalle de Tarea</h5>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'task_update' task.pk %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil me-1"></i>Editar
+                    </a>
+                    <a href="{% url 'task_delete' task.pk %}" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash me-1"></i>Eliminar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <h4 class="{% if task.completed %}task-completed{% endif %}">{{ task.title }}</h4>
+                <div class="d-flex gap-2 mb-3">
+                    <span class="badge badge-{{ task.priority }}">{{ task.get_priority_display }}</span>
+                    {% if task.completed %}
+                        <span class="badge bg-success">Completada</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Pendiente</span>
+                    {% endif %}
+                </div>
+                {% if task.description %}
+                <p class="text-muted">{{ task.description }}</p>
+                {% else %}
+                <p class="text-muted fst-italic">Sin descripción.</p>
+                {% endif %}
+                <hr>
+                <div class="row text-muted small">
+                    <div class="col-md-6"><i class="bi bi-calendar-plus me-1"></i>Creada: {{ task.created_at|date:"d M Y, H:i" }}</div>
+                    <div class="col-md-6"><i class="bi bi-calendar-check me-1"></i>Actualizada: {{ task.updated_at|date:"d M Y, H:i" }}</div>
+                </div>
+                <div class="mt-4">
+                    <a href="{% url 'task_toggle' task.pk %}" class="btn btn-{% if task.completed %}warning{% else %}success{% endif %}">
+                        <i class="bi bi-{% if task.completed %}arrow-counterclockwise{% else %}check-lg{% endif %} me-1"></i>
+                        Marcar como {% if task.completed %}Pendiente{% else %}Completada{% endif %}
+                    </a>
+                    <a href="{% url 'task_list' %}" class="btn btn-outline-secondary ms-2">← Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
